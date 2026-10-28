@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>sensor-dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>DashBoard Test</h1>
+    <canvas id="tempChart" width="600" height="300"></canvas>
+    <div id="data"></div>
+
+    <script>
+
+        let chart; //ตัวแปรเก็บกราฟ
+
+        async function loadData() {
+            const response = await fetch('/api/readings?limit=5'); //ให้ไปเอาข้อมูลจากURLที่กำหนด
+            const readings = await response.json(); //แปลงคำตอบให้เป็น object/array
+            console.log(readings)
+            
+            let html = '';
+            for (const reading of readings) { //loop array
+                html += `<p>อุณหภูมิ: ${reading.temperature}°C ความชื้น: ${reading.humidity}%</p>`;
+            }
+            document.getElementById('data').innerHTML = html;
+
+            //เตรียมข้อมูลสำหรับ graph
+            const labels = readings.map(r => new Date(r.recorded_at).toLocaleTimeString());
+            const temps = readings.map(r => r.temperature);
+            
+            if (!chart){
+            chart = new Chart(document.getElementById('tempChart'), {
+                type: 'line', //ชนิดกราฟ
+                data:{
+                    labels: labels, //แกน X(เวลา)
+                    datasets: [{ //ข้อมูลที่จะพล็อต
+                        label: 'อุณหภูมิ (°C)',
+                        data: temps, //แกน Y
+                        borderColor: 'red',
+                        fill: false
+                    }]
+                }
+            });
+        }else{ //ถ้ามีกราฟอยู่แล้ว แค่อัปเดตข้อมูล
+                chart.data.labels = labels;
+                chart.data.datasets[0].data = temps;
+                chart.update();
+        }
+        }
+        loadData(); //เรียกloadDataโดยไม่รอ
+        setInterval(loadData, 3000); //จะเปลี่ยนข้อมูลloadDataทุก 3 วิ
+    </script>
+</body>
+</html>
