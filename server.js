@@ -11,11 +11,8 @@ app.get('/hello', (req, res) => {    //res = ตอบกลับ
 
     app.get('/api/readings', async (req, res) => {
         const limit = req.query.limit || 20; //|| = หรือ
-        res.status(500).json({
-        })
-    })
 
-    try{
+        try{
         const result = await pool.query(
             'SELECT * FROM sensor_readings ORDER BY recorded_at DESC LIMIT $1',
             [limit] //ORDER BY recorded_at DESC = เรียงตามเวลาจากใหม่ไปเก่า
@@ -25,6 +22,7 @@ app.get('/hello', (req, res) => {    //res = ตอบกลับ
         console.log('เกิดข้อผิดพลาด:', error) //print error ใน treminal
         res.status(500).json({message: 'เกิดข้อผิดพลาดในการดึงข้อมูล'}) //อันนี้ส่งไปหน้า browser
     }
+});
 
 app.listen(3000, () => {    //app.listen = เปิด server
     console.log('server run in http://localhost:3000');

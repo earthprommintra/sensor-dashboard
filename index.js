@@ -11,3 +11,4 @@ async function read(){
 }
 
 setInterval(read, 2000); //ใช้ setintervalได้เลยอย่าคิดมาก
+

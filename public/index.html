@@ -21,9 +21,15 @@
             console.log(readings)
             
             let html = '';
-            for (const reading of readings) { //loop array
-                html += `<p>อุณหภูมิ: ${reading.temperature}°C ความชื้น: ${reading.humidity}%</p>`;
-            }
+            for (const reading of readings) {
+                const isHot = reading.temperature >= 35; //เก็บผลเทียบ true/flaseเงื่อนไข
+                 const color = isHot ? 'red' : 'black'; //?'ค่าถ้าจริง':'ค่าถ้าเท็จ'
+                const warningText = isHot ? '⚠️ ร้อนเกิน! ควรเปิดพัดลมเพิ่มหรือตรวจสอบระบบระบายความร้อน' : '';
+
+                html += `<p style="color: ${color};">อุณหภูมิ: ${reading.temperature}°C 
+                                                    ความชื้น: ${reading.humidity}%${warningText}</p>`;
+                }
+            
             document.getElementById('data').innerHTML = html;
 
             //เตรียมข้อมูลสำหรับ graph
